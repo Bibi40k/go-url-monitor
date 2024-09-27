@@ -2,9 +2,11 @@
 docker-compose up --build
 
 # Run app on Portainer - requires a personal Docker registry
-cd deploy <!-- Go to the deploy directory -->
-cp .env.sample .env <!-- Copy the sample .env file and fill data -->
-make build_dev <!-- Build the development version of the application -->
+```bash
+cd deploy           # Go to the deploy directory
+cp .env.sample .env # Copy the sample .env file and fill data
+make build_dev      # Build the development version of the application
+```
 
 - go to `Stacks` (in Portainer)
 - add stack

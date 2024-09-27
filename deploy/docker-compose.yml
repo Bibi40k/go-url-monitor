@@ -1,7 +1,7 @@
 # -------------- networks ------------- #
 networks:
   default:
-    name:         go-url-monitor
+    name:       ${STACK_NAME}
 
 # -------------- volumes -------------- #
 volumes:
@@ -10,26 +10,26 @@ volumes:
     driver_opts:
       type:       bind
       o:          bind
-      device:     ./volumes/air_config
+      device:     ${ROOT_DIR}/volumes/air_config
   vol-app:
     driver:       local
     driver_opts:
       type:       bind
       o:          bind
-      device:     ./volumes/app
+      device:     ${ROOT_DIR}/volumes/app
 
 # -------------- services ------------- #
 services:
   # ---------------- app ---------------- #
   app:
-    container_name: go-url-monitor
-    build:
-      context: ./volumes/app        # Set the build context to the root where go.mod and go.sum exist
-      dockerfile: Dockerfile.local  # Path to custom Dockerfile
+    container_name: ${STACK_NAME}-app
+    image: ${FQDN_REGISTRY}/${STACK_NAME}:dev
+    restart: always
     volumes:
-      - vol-app:/app
+      - /etc/localtime:/etc/localtime:ro
       - vol-air_config:/root/.air
+      - vol-app:/app
     env_file:
-      - ./volumes/app/.env
+      - stack.env # https://docs.portainer.io/user/docker/stacks/add#environment-variables
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1

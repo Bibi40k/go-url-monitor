@@ -1,0 +1,7 @@
+root = "."
+tmp_dir = "tmp"
+build_delay = 200
+[build]
+  cmd = "go build -o ./tmp/main ./cmd/main.go"
+  bin = "tmp/main"
+  full_bin = "./tmp/main"

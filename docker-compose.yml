@@ -1,0 +1,13 @@
+services:
+  app:
+    container_name: go-url-monitor
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - air_config:/root/.air
+    env_file:
+      - .env
+volumes:
+  air_config:

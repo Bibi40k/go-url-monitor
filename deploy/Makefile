@@ -8,20 +8,18 @@ export $(env_file)
 
 # Variables
 date_stamp=$(shell date +%Y%m%d%H%M%S)
-img_name=$(FQDN_REGISTRY)/$(STACK_NAME)
+img_name=$(FQDN_REGISTRY)/go-url-monitor
 
 # Printing vars for debugging
 # $(info MAKEFILE_DIR = $(MAKEFILE_DIR))
-# $(info ROOT_DIR = $(ROOT_DIR))
 # $(info FQDN_REGISTRY = $(FQDN_REGISTRY))
-# $(info img_name = $(img_name))
 
 # Build production image & push to repo
 build:
-	docker build -f $(ROOT_DIR)/volumes/app/Dockerfile -t $(img_name):$(date_stamp) $(ROOT_DIR)/volumes/app
+	docker build -f $(MAKEFILE_DIR)/../volumes/app/Dockerfile.prod -t $(img_name):$(date_stamp) $(MAKEFILE_DIR)/../volumes/app
 	docker push $(img_name):$(date_stamp)
 
 # Build development image & push to repo
 build_dev:
-	docker build -f $(ROOT_DIR)/volumes/app/Dockerfile.dev -t $(img_name):dev $(ROOT_DIR)/volumes/app
+	docker build -f $(MAKEFILE_DIR)/../volumes/app/Dockerfile.dev -t $(img_name):dev $(MAKEFILE_DIR)/../volumes/app
 	docker push $(img_name):dev

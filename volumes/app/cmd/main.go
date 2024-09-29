@@ -1,15 +1,22 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"go-url-monitor/config"
 	"go-url-monitor/helpers"
 	"go-url-monitor/notifiers"
+	"os"
 	"time"
 )
 
+const stateFilePath = "./monitor_state.json"
+
 func main() {
 	config.LoadConfig()
+
+	// Load previous state if available
+	loadState()
 
 	checkInterval := 1 * time.Minute
 	notificationInterval := 5 * time.Minute
@@ -23,16 +30,50 @@ func main() {
 					sendNotification(urlConfig, "back online")
 					config.URLConfigs[i].LastNotification = time.Now()
 					config.URLConfigs[i].Status = "online"
+					saveState() // Save state after every update
 				}
 			} else {
 				if urlConfig.Status == "online" || time.Since(urlConfig.LastNotification) > notificationInterval {
 					sendNotification(urlConfig, "offline")
 					config.URLConfigs[i].LastNotification = time.Now()
 					config.URLConfigs[i].Status = "offline"
+					saveState() // Save state after every update
 				}
 			}
 		}
 		time.Sleep(checkInterval)
+	}
+}
+
+// saveState saves the current state to a JSON file
+func saveState() {
+	stateData, err := json.Marshal(config.URLConfigs)
+	if err != nil {
+		fmt.Println("Error saving state:", err)
+		return
+	}
+
+	err = os.WriteFile(stateFilePath, stateData, 0644)
+	if err != nil {
+		fmt.Println("Error writing state file:", err)
+	}
+}
+
+// loadState loads the state from a JSON file if it exists
+func loadState() {
+	if _, err := os.Stat(stateFilePath); os.IsNotExist(err) {
+		return // State file does not exist, nothing to load
+	}
+
+	stateData, err := os.ReadFile(stateFilePath)
+	if err != nil {
+		fmt.Println("Error reading state file:", err)
+		return
+	}
+
+	err = json.Unmarshal(stateData, &config.URLConfigs)
+	if err != nil {
+		fmt.Println("Error parsing state file:", err)
 	}
 }
 

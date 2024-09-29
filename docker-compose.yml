@@ -1,34 +1,14 @@
-# -------------- networks ------------- #
-networks:
-  default:
-    name:         go-url-monitor
-
-# -------------- volumes -------------- #
-volumes:
-  vol-air_config:
-    driver:       local
-    driver_opts:
-      type:       bind
-      o:          bind
-      device:     ./volumes/air_config
-  vol-app:
-    driver:       local
-    driver_opts:
-      type:       bind
-      o:          bind
-      device:     ./volumes/app
-
 # -------------- services ------------- #
 services:
   # ---------------- app ---------------- #
   app:
     container_name: go-url-monitor
     build:
-      context: ./volumes/app        # Set the build context to the root where go.mod and go.sum exist
-      dockerfile: Dockerfile.local  # Path to custom Dockerfile
+      context: ./volumes/app            # Set the build context to the root where go.mod and go.sum exist
+      dockerfile: Dockerfile.dev        # Path to custom Dockerfile
     volumes:
-      - vol-app:/app
-      - vol-air_config:/root/.air
+      - ./volumes/app:/app              # Bind mount instead of named volume
+      - ./volumes/air_config:/root/.air # Bind mount the Air config
     env_file:
       - ./volumes/app/.env
     sysctls:

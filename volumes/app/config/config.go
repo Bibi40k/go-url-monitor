@@ -27,9 +27,16 @@ type URLConfig struct {
 var GenericEmail []string
 var GenericDiscord []DiscordWebhook
 var URLConfigs []URLConfig
+var DevMode bool
 
 // LoadConfig dynamically loads the URL configurations from environment variables
 func LoadConfig() error {
+	// Check if running in development mode
+	DevMode = os.Getenv("DEV_MODE") == "true"
+	if DevMode {
+		fmt.Println("Running in Development Mode: Only generic notifications will be sent.")
+	}
+
 	// Load generic configurations
 	GenericEmail = loadEnvAsSlice("GENERIC_EMAIL", ",", true)
 	GenericDiscord = []DiscordWebhook{
@@ -64,19 +71,24 @@ func LoadConfig() error {
 			continue // Skip if URL is not provided
 		}
 
-		emailList := loadEnvAsSlice("URL_"+indexStr+"_SPECIFIC_EMAILS", ",", false)
-		userIDList := loadEnvAsSlice("URL_"+indexStr+"_SPECIFIC_DISCORD_USER_IDS", ",", false)
-
-		// Create DiscordWebhook object only if ID and Token are provided
+		// Only load specific emails and Discord if not in dev mode
+		var emailList []string
 		var discordWebhooks []DiscordWebhook
-		discordID := os.Getenv("URL_" + indexStr + "_SPECIFIC_DISCORD_ID")
-		discordToken := os.Getenv("URL_" + indexStr + "_SPECIFIC_DISCORD_TOKEN")
-		if discordID != "" && discordToken != "" {
-			discordWebhooks = append(discordWebhooks, DiscordWebhook{
-				ID:      discordID,
-				Token:   discordToken,
-				UserIDs: userIDList,
-			})
+
+		if !DevMode {
+			emailList = loadEnvAsSlice("URL_"+indexStr+"_SPECIFIC_EMAILS", ",", false)
+			discordID := os.Getenv("URL_" + indexStr + "_SPECIFIC_DISCORD_ID")
+			discordToken := os.Getenv("URL_" + indexStr + "_SPECIFIC_DISCORD_TOKEN")
+			userIDList := loadEnvAsSlice("URL_"+indexStr+"_SPECIFIC_DISCORD_USER_IDS", ",", false)
+
+			// Create DiscordWebhook object only if ID and Token are provided
+			if discordID != "" && discordToken != "" {
+				discordWebhooks = append(discordWebhooks, DiscordWebhook{
+					ID:      discordID,
+					Token:   discordToken,
+					UserIDs: userIDList,
+				})
+			}
 		}
 
 		// Add URL configuration

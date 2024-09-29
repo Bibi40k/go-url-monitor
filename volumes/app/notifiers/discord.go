@@ -49,9 +49,9 @@ func FormatDiscordMessage(userIDs []string, message string, status string) strin
 	// Add color using Discord's Markdown syntax
 	var color string
 	if status == "offline" {
-		color = "```diff\n-"
+		color = "```diff\n- "
 	} else {
-		color = "```fix\n+"
+		color = "```md\n> "
 	}
 
 	return fmt.Sprintf("%s %s%s\n```", tags, color, message)

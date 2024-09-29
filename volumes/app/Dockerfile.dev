@@ -1,17 +1,16 @@
 # Dockerfile for Go project using Air
 FROM golang:1.23-alpine
 
+RUN apk update && apk upgrade && \
+    apk add --no-cache git openssh tzdata curl
+
 WORKDIR /app
+
+# Set development mode environment variable
+ENV DEV_MODE=true
 
 # Install Air globally
 RUN go install github.com/air-verse/air@latest
-
-# Copy the Go module files and install dependencies
-COPY go.mod go.sum ./
-RUN go mod download
-
-# Copy the rest of the application
-COPY . .
 
 # Start Air for live reloading
 CMD ["air"]

@@ -18,9 +18,6 @@ func main() {
 	// Load previous state if available
 	loadState()
 
-	checkInterval := 1 * time.Minute
-	notificationInterval := 5 * time.Minute
-
 	for {
 		for i, urlConfig := range config.URLConfigs {
 			isOnline := helpers.IsURLOnline(urlConfig.URL)
@@ -33,7 +30,7 @@ func main() {
 					saveState() // Save state after every update
 				}
 			} else {
-				if urlConfig.Status == "online" || time.Since(urlConfig.LastNotification) > notificationInterval {
+				if urlConfig.Status == "online" || time.Since(urlConfig.LastNotification) > config.NotificationInterval {
 					sendNotification(urlConfig, "offline")
 					config.URLConfigs[i].LastNotification = time.Now()
 					config.URLConfigs[i].Status = "offline"
@@ -41,7 +38,7 @@ func main() {
 				}
 			}
 		}
-		time.Sleep(checkInterval)
+		time.Sleep(config.CheckInterval)
 	}
 }
 

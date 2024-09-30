@@ -28,6 +28,8 @@ var GenericEmail []string
 var GenericDiscord []DiscordWebhook
 var URLConfigs []URLConfig
 var DevMode bool
+var CheckInterval = 1 * time.Minute
+var NotificationInterval = 60 * time.Minute
 
 // LoadConfig dynamically loads the URL configurations from environment variables
 func LoadConfig() error {

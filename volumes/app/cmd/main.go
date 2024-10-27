@@ -102,7 +102,7 @@ func sendNotification(urlConfig config.URLConfig, status string) {
 	// Get current time in Bucharest timezone
 	currentTime := time.Now().In(bucharestTimeZone).Format("02-Jan-2006 15:04:05")
 
-	message := fmt.Sprintf("Status: %s\nURL: %s\nTime: %s", status, urlConfig.URL, currentTime)
+	message := fmt.Sprintf("Status: %s\nURL: [%s](%s)\nTime: %s", status, urlConfig.URL, urlConfig.URL, currentTime)
 
 	// Notify generic Discord channels
 	for _, discord := range config.GenericDiscord {

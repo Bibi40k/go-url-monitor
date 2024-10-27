@@ -12,6 +12,8 @@ import (
 
 const stateFilePath = "./monitor_state.json"
 
+var firstRun = true
+
 func main() {
 	config.LoadConfig()
 
@@ -20,6 +22,8 @@ func main() {
 
 	for {
 		for i, urlConfig := range config.URLConfigs {
+			fmt.Println("Checking for", urlConfig.URL)
+
 			isOnline := helpers.IsURLOnline(urlConfig.URL)
 
 			if isOnline {
@@ -38,6 +42,7 @@ func main() {
 				}
 			}
 		}
+		fmt.Printf("Sleeping for %.0f minutes\n", config.CheckInterval.Minutes())
 		time.Sleep(config.CheckInterval)
 	}
 }
@@ -58,6 +63,18 @@ func saveState() {
 
 // loadState loads the state from a JSON file if it exists
 func loadState() {
+	// Clear state if it's the app's first run
+	if firstRun {
+		if err := os.Remove(stateFilePath); err != nil && !os.IsNotExist(err) {
+			fmt.Println("Error clearing state on first run:", err)
+		} else {
+			fmt.Println("State cleared on first run")
+		}
+		firstRun = false // Set firstRun to false after initial load
+		return           // Skip loading if file was just cleared
+	}
+
+	// Load state if file exists
 	if _, err := os.Stat(stateFilePath); os.IsNotExist(err) {
 		return // State file does not exist, nothing to load
 	}

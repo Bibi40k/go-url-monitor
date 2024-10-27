@@ -43,7 +43,7 @@ func SendDiscordMessage(webhook config.DiscordWebhook, message string) {
 	}
 }
 
-func FormatDiscordMessage(userIDs []string, message string, status string) string {
+func FormatDiscordMessage(userIDs []string, currentTime string, status string, url string) string {
 	// Tag users in Discord by their ID
 	tags := ""
 	for _, id := range userIDs {
@@ -53,10 +53,11 @@ func FormatDiscordMessage(userIDs []string, message string, status string) strin
 	// Add color using Discord's Markdown syntax
 	var color string
 	if status == "offline" {
-		color = "```diff\n- "
+		color = "```diff\n- " //red
 	} else {
-		color = "```md\n> "
+		color = "```diff\n+ " //green
 	}
 
-	return fmt.Sprintf("%s %s%s\n```", tags, color, message)
+	// Format message with clickable URL on a new line, outside of the code block
+	return fmt.Sprintf("%s%sStatus: %s\nTime: %s\n```%s", tags, color, status, currentTime, url)
 }

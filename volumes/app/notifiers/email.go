@@ -11,17 +11,18 @@ func SendEmail(to, subject, body string) {
 	// Set up authentication information.
 	smtpHost := os.Getenv("SMTP_HOST") // e.g., "smtp.gmail.com"
 	smtpPort := os.Getenv("SMTP_PORT") // e.g., "587"
-	smtpUser := os.Getenv("SMTP_USER") // Your SMTP username, e.g., notifier@cadolino.ro
+	smtpUser := os.Getenv("SMTP_USER") // Your SMTP username
 	smtpPass := os.Getenv("SMTP_PASS") // Your SMTP password
 
 	from := smtpUser    // Use the same email as the SMTP authenticated user for "From"
 	replyTo := smtpUser // Optional: Set a reply-to address
 
-	// Create the email message with a Reply-To header
+	// Create the email message with headers
 	msg := []byte("To: " + to + "\r\n" +
 		"From: " + from + "\r\n" +
-		"Reply-To: " + replyTo + "\r\n" + // Set Reply-To if you want replies to go elsewhere
+		"Reply-To: " + replyTo + "\r\n" +
 		"Subject: " + subject + "\r\n" +
+		"Content-Type: text/html; charset=\"UTF-8\"\r\n" + // Set content type to HTML
 		"\r\n" +
 		body + "\r\n")
 

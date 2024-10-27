@@ -102,6 +102,17 @@ func sendNotification(urlConfig config.URLConfig, status string) {
 	// Get current time in Bucharest timezone
 	currentTime := time.Now().In(bucharestTimeZone).Format("02-Jan-2006 15:04:05")
 
+	// Create an email body template
+	emailBody := fmt.Sprintf(`
+		<html>
+		<body>
+			<h2>Website Status Notification</h2>
+			<p><strong>Status:</strong> %s</p>
+			<p><strong>URL:</strong> <a href="%s">%s</a></p>
+			<p><strong>Time:</strong> %s</p>
+		</body>
+		</html>`, status, urlConfig.URL, urlConfig.URL, currentTime)
+
 	// Notify generic Discord channels
 	for _, discord := range config.GenericDiscord {
 		formattedMessage := notifiers.FormatDiscordMessage(discord.UserIDs, currentTime, status, urlConfig.URL)
@@ -114,12 +125,12 @@ func sendNotification(urlConfig config.URLConfig, status string) {
 		notifiers.SendDiscordMessage(discord, formattedMessage)
 	}
 
-	// Notify via email
+	// Notify via email with HTML template
 	for _, email := range config.GenericEmail {
-		notifiers.SendEmail(email, "URL "+status, currentTime)
+		notifiers.SendEmail(email, "URL "+status, emailBody)
 	}
 
 	for _, email := range urlConfig.SpecificEmail {
-		notifiers.SendEmail(email, "Specific Monitoring: URL "+status, currentTime)
+		notifiers.SendEmail(email, "Specific Monitoring: URL "+status, emailBody)
 	}
 }

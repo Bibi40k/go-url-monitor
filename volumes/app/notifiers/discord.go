@@ -9,14 +9,18 @@ import (
 )
 
 type DiscordWebhookPayload struct {
-	Content string `json:"content"`
+	Content   string `json:"content"`
+	AvatarURL string `json:"avatar_url"`
+	Username  string `json:"username"` // Optional: Set a custom name
 }
 
 func SendDiscordMessage(webhook config.DiscordWebhook, message string) {
 	webhookURL := fmt.Sprintf("https://discord.com/api/webhooks/%s/%s", webhook.ID, webhook.Token)
 
 	payload := DiscordWebhookPayload{
-		Content: message,
+		Content:   message,
+		AvatarURL: "https://cadolino.ro/_proiecte/discord/icons/discord-url-monitor.png", // Replace with your desired icon URL
+		Username:  "Url Monitor",                                                         // Optionally customize the sender's name
 	}
 
 	jsonData, err := json.Marshal(payload)

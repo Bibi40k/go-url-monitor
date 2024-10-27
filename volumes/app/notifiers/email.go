@@ -14,7 +14,8 @@ func SendEmail(to, subject, body string) {
 	smtpUser := os.Getenv("SMTP_USER") // Your SMTP username
 	smtpPass := os.Getenv("SMTP_PASS") // Your SMTP password
 
-	from := smtpUser    // Use the same email as the SMTP authenticated user for "From"
+	// Specify the sender with display name "Url Monitor"
+	from := fmt.Sprintf("\"Url Monitor\" <%s>", smtpUser)
 	replyTo := smtpUser // Optional: Set a reply-to address
 
 	// Create the email message with headers
@@ -33,7 +34,7 @@ func SendEmail(to, subject, body string) {
 	auth := smtp.PlainAuth("", smtpUser, smtpPass, smtpHost)
 
 	// Send the email
-	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, from, recipients, msg)
+	err := smtp.SendMail(smtpHost+":"+smtpPort, auth, smtpUser, recipients, msg)
 	if err != nil {
 		fmt.Printf("Error sending email to %s: %v\n", to, err)
 		return

@@ -15,7 +15,7 @@ func IsURLOnline(url string) bool {
 	}
 
 	client := http.Client{
-		Timeout: 10 * time.Second, // Timeout for checking URL
+		Timeout: 30 * time.Second, // Timeout for checking URL
 	}
 	resp, err := client.Get(url)
 	if err != nil || resp.StatusCode != http.StatusOK {
